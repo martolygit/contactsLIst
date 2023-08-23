@@ -1,0 +1,115 @@
+<button tuiButton appearance="primary" size="xl" style="float: right;" (click)="onCreateContactClick();">+ Add New
+	Contact
+</button>
+<h1>Contacts</h1>
+<app-progressbar *ngIf="!currentAccount"></app-progressbar>
+
+<div
+    tuiTextfieldSize="m"
+    class="filter"
+    [formGroup]="searchForm"
+>
+    <tui-input
+        [tuiTextfieldCleaner]="true"
+        tuiTextfieldIcon="tuiIconSearch"
+        formControlName="searchValue"
+        style="flex: 1;"
+        (keydown.enter)="doRequest()"
+    >
+        Find in contacts
+        <input
+            tuiTextfield
+        />
+    </tui-input>
+    <tui-select
+        formControlName="channelValue"
+        [valueContent] = "getFilterLabel()"
+        style="width: 250px;"
+    >
+        <tui-data-list *tuiDataList>
+            <button tuiOption value="">All</button>
+            <button tuiOption *ngFor="let channel of ChannelData | keyvalue" [value]="channel.key">{{channel.value.name}}</button>
+        </tui-data-list>
+        Channel
+    </tui-select>
+</div>
+
+<tui-loader
+    [overlay]="true"
+    [showLoader]="!!(loading$ | async)"
+>
+<table
+    class="full-width"
+    tuiTable
+    *ngIf="data$ | async as leads"
+    [columns]="contactColumns"
+    [direction]="(direction$ | async) || 1"
+    [tuiSortBy]="sorter$ | async"
+    (tuiSortByChange)="sorter$.next($event!)"
+    (directionChange)="direction$.next($event)"
+>
+	<thead>
+	<tr tuiThGroup>
+		<th *tuiHead="'name'"
+			tuiTh
+            tuiSortable
+		>Name
+		</th>
+		<th *tuiHead="'channel'"
+			tuiTh
+            [sorter]="null"
+		>Channel
+		</th>
+		<th *tuiHead="'date'"
+			tuiTh
+            tuiSortable
+		>Subscribed
+		</th>
+	</tr>
+	</thead>
+	<tbody *tuiLet="leads | tuiTableSort as sortedLeads"
+		   tuiTbody
+		   [data]="sortedLeads">
+	<tr *ngFor="let lead of sortedLeads"
+		tuiTr
+		class="contact-item rollable"
+		(click)="onLeadClick(lead);">
+		<td *tuiCell="'name'" tuiTd>
+			<div style="display: flex; justify-content: flex-start; align-items: center;">
+				<tui-avatar
+						[text]="lead.getName()"
+						[rounded]="true"
+						size="s"
+						[avatarUrl]="lead.profilePicture">
+				</tui-avatar>
+				&nbsp;
+				{{lead.getName()}}
+			</div>
+
+		</td>
+		<td *tuiCell="'channel'" tuiTd>
+			<div style="display: flex; justify-content: flex-start; align-items: center;">
+				<ng-container *ngIf="ChannelsArray.includes(lead.channel)">
+					<img class="channel-icon" [src]="ChannelData.get(lead.channel)!.icon"/>
+					{{ChannelData.get(lead.channel)!.name}}
+				</ng-container>
+			</div>
+		</td>
+		<td *tuiCell="'date'" tuiTd>
+            {{lead.dateAdded.toLocaleString()}}
+        </td>
+	</tr>
+	</tbody>
+    <tfoot>
+        <tr>
+            <td colSpan="3">
+                <tui-table-pagination
+                    class="tui-space_top-2"
+                    [total]="(total$ | async) || 0"
+                    [size]="(size$ | async) || 10"
+                    (paginationChange)= "onPaginationChange($event)"
+                ></tui-table-pagination>
+            </td>
+        </tr>
+    </tfoot>
+</table>

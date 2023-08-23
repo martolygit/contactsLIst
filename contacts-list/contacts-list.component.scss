@@ -1,0 +1,13 @@
+
+.channel-icon {
+  border-radius: 0px;
+  margin: 5px;
+  max-width: 20px;
+  max-height: 20px;
+}
+.filter{
+    display: flex;
+    tui-input, tui-select{
+        margin: 10px;
+    }
+}
