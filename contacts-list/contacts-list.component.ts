@@ -159,4 +159,5 @@ export class ContactsListComponent implements OnInit {
         }
         return 'All';
     }
+
 }
