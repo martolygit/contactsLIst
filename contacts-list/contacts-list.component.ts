@@ -28,7 +28,8 @@ import {ChannelData, ChannelsArray, ChannelType} from "../../../models/select-da
 @Component({
     selector: 'app-contacts-list',
     templateUrl: './contacts-list.component.html',
-    styleUrls: ['./contacts-list.component.scss']
+    styleUrls: ['./contacts-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactsListComponent implements OnInit {
 
